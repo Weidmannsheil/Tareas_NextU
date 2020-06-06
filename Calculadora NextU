@@ -1,0 +1,137 @@
+var calc = {
+	init : function(){ 
+		var Operador1=''
+		var Operador=''
+		var Botones = [0,1,2,3,4,5,6,7,8,9,'punto','on','sign','raiz','dividido','por','menos','mas','igual']; 
+		for(i=0;i<=18;i++){ 
+			document.getElementById(Botones[i]).onmousedown=this.presionaBoton;
+			document.getElementById(Botones[i]).onmouseup=this.presionaBoton;
+		}
+	},
+	
+	presionaBoton : function(eventoBoton){ 
+		var evento = eventoBoton || window.event; 
+		switch(evento.type) {
+			case 'mousedown':
+				this.style="box-shadow: inset -25px -25px 25px 25px rgba(100,100,100,100)";							  
+				break;
+			case 'mouseup':
+				this.style="box-shadow: 0 0 0 0 rgba(100,100,100,100)";
+				calc.verifyBotonera(this.id)
+				break;
+			default :
+				alert('NO ENTRY'+ evento.type);
+				break;
+		}
+	},
+	
+	screenDisplay : function(number){
+		var display = document.getElementById('display')
+		var number = String(number)
+		var n = number.indexOf('-');
+		if(number != 'clear'){
+			if(number.length>8 && n<0 && number != 0){
+				number=number.substr(0,8)
+			}else if(number.length>8 && n>=0 && number != 0){
+				number=number.substr(0,9)
+			}
+			display.innerHTML=number
+		}else{
+			display.innerHTML=0;
+		}		
+	},
+	
+	verifyBotonera : function(idBoton){ 
+		var display = document.getElementById('display')
+		var displayValorActual= display.innerHTML
+		var nuevoValor=displayValorActual
+		console.log(displayValorActual)
+		if(idBoton >=0 || idBoton<=9){ 
+			
+			if(displayValorActual=="0"){ 
+				nuevoValor=idBoton
+					
+			}else{
+				nuevoValor=displayValorActual+idBoton
+			}
+		}
+		
+		if(idBoton == 'on'){
+			nuevoValor="clear"
+			
+		}
+		if(idBoton == 'punto'){
+			var n = displayValorActual.indexOf('.');
+			console.log(n)
+			if(n<=0){
+				nuevoValor=displayValorActual+'.'
+			}
+		}
+		
+		if(idBoton == 'sign'){
+			var n = displayValorActual.indexOf('-');
+			console.log(n)
+			if(n>=0){
+				nuevoValor=displayValorActual.replace('-', '');
+			}else{
+				if(displayValorActual>0){
+					nuevoValor='-'+displayValorActual
+				}
+			}
+		}
+		
+		this.screenDisplay(nuevoValor)
+		
+		if(idBoton == 'mas' || idBoton == 'menos' || idBoton == 'por' || idBoton == 'dividido'){
+			this.Operador1=displayValorActual
+			this.Operacion=idBoton
+			display.innerHTML=''
+		}
+		
+		if(idBoton=='igual'){
+			var resultado;
+			resultado=this.calcOperations(this.Operador1,nuevoValor,this.Operacion);
+			
+			this.screenDisplay(resultado)
+		}
+		
+		if(idBoton=='raiz'){
+			var resultado;
+			resultado=Math.sqrt(displayValorActual);			
+			this.screenDisplay(resultado)
+		}
+	},
+
+	calcOperations : function(Operador1,Operador2,Operacion){
+		console.log(Operador1+" "+Operacion+" "+Operador2)
+		if( Operador1 !='' && Operacion != ''){
+			var resultado=0;
+			switch (Operacion){
+				case 'mas':
+					resultado=parseFloat(Operador1)+parseFloat(Operador2);
+					console.log(Operador1+" + "+Operador2+"="+resultado)
+					return(resultado);
+					break;
+				case 'resta':
+					resultado=parseFloat(Operador1)-parseFloat(Operador2);
+					return(resultado);
+					break;
+				case 'por':
+					resultado=parseFloat(Operador1)*parseFloat(Operador2);
+					return(resultado);
+					break;
+				case 'dividido':
+					resultado=parseFloat(Operador1)/parseFloat(Operador2);
+					return(resultado);
+					break;		
+			}
+			
+		}else{
+			return('NA');
+		}
+		
+	}
+	
+}
+
+calc.init()
